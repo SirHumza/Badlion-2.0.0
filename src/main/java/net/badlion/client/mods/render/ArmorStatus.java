@@ -140,7 +140,7 @@ public class ArmorStatus
     if (((event instanceof RenderGame)) && (isEnabled()))
     {
       RenderGame rendergame = (RenderGame)event;
-      List<ItemStack> list = (List<ItemStack>) (Wrapper.getInstance().getActiveModProfile().getModConfigurator().isInEditingMode() ? Arrays.asList(new ItemStack[] { new ItemStack(Item.getItemById(313)), new ItemStack(Item.getItemById(312)), new ItemStack(Item.getItemById(311)), new ItemStack(Item.getItemById(310)) }) : Arrays.asList((Object[])this.gameInstance.thePlayer.inventory.armorInventory.clone()));
+      List<ItemStack> list = (List<ItemStack>) (Wrapper.getInstance().getActiveModProfile().getModConfigurator().isInEditingMode() ? Arrays.asList(new ItemStack[] { new ItemStack(Item.getItemById(313)), new ItemStack(Item.getItemById(312)), new ItemStack(Item.getItemById(311)), new ItemStack(Item.getItemById(310)) }) : Arrays.asList((Object[])this.gameInstance.thePlayer.inventory.armorInventory));
       Collections.reverse(list);
       ArrayList arraylist = new ArrayList(list);
       if (Wrapper.getInstance().getActiveModProfile().getModConfigurator().isInEditingMode()) {

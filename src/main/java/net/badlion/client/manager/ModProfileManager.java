@@ -32,6 +32,10 @@ import org.lwjgl.input.Mouse;
 public class ModProfileManager
 {
     private static final String NEW_PROFILE_NAME_PREFIX = "New Profile ";
+
+    // Shared daemon timer for delayed file cleanup; per-call timers leaked one
+    // live non-daemon thread each and could keep the JVM from exiting
+    private final Timer cleanupTimer = new Timer("Badlion-ProfileCleanup", true);
     private static final String CLONED_PROFILE_NAME_PREFIX = "Cloned Profile ";
     private final File modProfilesFolder;
     private ModProfile activeModProfile;
@@ -318,7 +322,7 @@ public class ModProfileManager
 
         if (this.modProfiles.isEmpty())
         {
-            (new Timer()).schedule(new TimerTask()
+            this.cleanupTimer.schedule(new TimerTask()
             {
                 public void run()
                 {
@@ -347,7 +351,7 @@ public class ModProfileManager
             }
 
             this.activateModProfile((ModProfile)this.modProfiles.get(j));
-            (new Timer()).schedule(new TimerTask()
+            this.cleanupTimer.schedule(new TimerTask()
             {
                 public void run()
                 {

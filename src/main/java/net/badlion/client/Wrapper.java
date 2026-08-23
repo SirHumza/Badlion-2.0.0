@@ -98,6 +98,7 @@ public class Wrapper {
     public boolean flags;
     private int lastDisplayX;
     private int lastDisplayY;
+    private long resizeDirtySince;
     private boolean connected;
     private int failSafe;
     private BaseUIRenderer UIRenderer;
@@ -479,6 +480,10 @@ public class Wrapper {
                 || Minecraft.getMinecraft().displayHeight != this.lastDisplayY) {
             this.lastDisplayX = Minecraft.getMinecraft().displayWidth;
             this.lastDisplayY = Minecraft.getMinecraft().displayHeight;
+            // Debounce: one save after the window stops moving, instead of one per frame
+            this.resizeDirtySince = System.currentTimeMillis();
+        } else if (this.resizeDirtySince != 0L && System.currentTimeMillis() - this.resizeDirtySince >= 2000L) {
+            this.resizeDirtySince = 0L;
             this.getModProfileManager().saveActiveModProfile();
         }
 

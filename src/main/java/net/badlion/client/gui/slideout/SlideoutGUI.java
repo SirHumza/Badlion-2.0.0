@@ -535,11 +535,22 @@ public class SlideoutGUI
 
     public void init()
     {
-        this.timer = new Timer();
+        // Daemon + cancel-on-reinit so repeated init() calls can't pile up live timer threads
+        if (this.timer != null)
+        {
+            this.timer.cancel();
+        }
+
+        this.timer = new Timer("Badlion-SlideoutUpdate", true);
         this.timer.schedule(new TimerTask()
         {
             public void run()
             {
+                if (!SlideoutGUI.this.visible)
+                {
+                    return;
+                }
+
                 try
                 {
                     synchronized (Wrapper.getInstance().getModProfileManager())

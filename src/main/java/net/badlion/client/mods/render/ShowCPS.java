@@ -89,20 +89,16 @@ public class ShowCPS extends RenderMod
         {
             this.labelColor.tickColor();
             this.backgroundColor.tickColor();
-            List<Long> list = new ArrayList();
+            long l = System.currentTimeMillis();
             Iterator mY = this.delays.iterator();
 
             while (mY.hasNext())
             {
-                long i = ((Long)mY.next()).longValue();
-
-                if (System.currentTimeMillis() - i < 1000L)
+                if (l - ((Long)mY.next()).longValue() >= 1000L)
                 {
-                    list.add(Long.valueOf(i));
+                    mY.remove();
                 }
             }
-
-            this.delays = list;
         }
 
         if (event instanceof GUIClickMouse && ((GUIClickMouse)event).getMouseButton() == 0)

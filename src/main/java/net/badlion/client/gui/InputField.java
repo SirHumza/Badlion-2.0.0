@@ -230,6 +230,7 @@ public class InputField extends RenderElement
                 this.focused = false;
                 this.textSelected = false;
                 this.resetCursorPosition();
+                Keyboard.enableRepeatEvents(false);
             }
         }
     }
@@ -305,6 +306,7 @@ public class InputField extends RenderElement
             this.focused = true;
             this.textSelected = false;
             this.resetCursorPosition();
+            Keyboard.enableRepeatEvents(true);
             return true;
         }
         else
@@ -457,6 +459,7 @@ public class InputField extends RenderElement
         if (focused)
         {
             this.resetCursorPosition();
+            Keyboard.enableRepeatEvents(true);
         }
     }
 
@@ -483,6 +486,7 @@ public class InputField extends RenderElement
         this.text = "";
         this.textSelected = false;
         this.resetCursorPosition();
+        Keyboard.enableRepeatEvents(false);
     }
 
     private void resetCursorPosition()

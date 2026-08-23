@@ -123,20 +123,26 @@ public class Keystrokes extends RenderMod
              this.keystrokeColorClicked.tickColor();
              this.fontColor.tickColor();
              this.fontColorClicked.tickColor();
-             final List<Long> newDelaysLMB = new ArrayList<Long>();
-             for (final long l : this.delaysLMB) {
-                 if (System.currentTimeMillis() - l < 1000L) {
-                     newDelaysLMB.add(l);
+             long now = System.currentTimeMillis();
+             Iterator<Long> iteratorLMB = this.delaysLMB.iterator();
+
+             while (iteratorLMB.hasNext())
+             {
+                 if (now - iteratorLMB.next().longValue() >= 1000L)
+                 {
+                     iteratorLMB.remove();
                  }
              }
-             this.delaysLMB = newDelaysLMB;
-             final List<Long> newDelaysRMB = new ArrayList<Long>();
-             for (final long i : this.delaysRMB) {
-                 if (System.currentTimeMillis() - i < 1000L) {
-                     newDelaysRMB.add(i);
+
+             Iterator<Long> iteratorRMB = this.delaysRMB.iterator();
+
+             while (iteratorRMB.hasNext())
+             {
+                 if (now - iteratorRMB.next().longValue() >= 1000L)
+                 {
+                     iteratorRMB.remove();
                  }
              }
-             this.delaysRMB = newDelaysRMB;
          }
 
         if (e instanceof GUIClickMouse && ((GUIClickMouse)e).getMouseButton() == 0)
