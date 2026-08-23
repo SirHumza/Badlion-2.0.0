@@ -153,6 +153,8 @@ public class ShowPing extends RenderMod
 
             if (!this.workerThread.isAlive())
             {
+                // A terminated thread cannot be restarted; spin up a fresh one around the same worker
+                this.workerThread = new Thread(this.worker);
                 this.workerThread.start();
             }
 

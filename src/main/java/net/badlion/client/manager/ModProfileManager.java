@@ -1,12 +1,16 @@
 package net.badlion.client.manager;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.Writer;
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -61,7 +65,7 @@ public class ModProfileManager
             {
                 try
                 {
-                    FileReader filereader = new FileReader(file1);
+                    Reader filereader = new InputStreamReader(new FileInputStream(file1), StandardCharsets.UTF_8);
                     Throwable throwable = null;
 
                     try
@@ -161,46 +165,26 @@ public class ModProfileManager
     private void saveModProfile(ModProfile modProfile)
     {
         File file1 = new File(this.modProfilesFolder, modProfile.getProfileName() + ".json");
+        File file2 = new File(this.modProfilesFolder, modProfile.getProfileName() + ".json.tmp");
 
         try
         {
-            FileWriter filewriter = new FileWriter(file1);
-            Throwable throwable = null;
+            // Write to a temp file first so a crash mid-write cannot truncate the real profile
+            Writer writer = new OutputStreamWriter(new FileOutputStream(file2), StandardCharsets.UTF_8);
 
             try
             {
-                filewriter.write(Wrapper.getInstance().getGson().toJson((Object)modProfile));
-            }
-            catch (Throwable throwable2)
-            {
-                throwable = throwable2;
-                try {
-					throw throwable2;
-				} catch (Throwable e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                writer.write(Wrapper.getInstance().getGson().toJson((Object)modProfile));
+                writer.flush();
             }
             finally
             {
-                if (filewriter != null)
-                {
-                    if (throwable != null)
-                    {
-                        try
-                        {
-                            filewriter.close();
-                        }
-                        catch (Throwable throwable1)
-                        {
-                            throwable.addSuppressed(throwable1);
-                        }
-                    }
-                    else
-                    {
-                        filewriter.close();
-                    }
-                }
+                writer.close();
+            }
+
+            if (!file2.renameTo(file1))
+            {
+                throw new IOException("Could not replace " + file1.getName() + " with " + file2.getName());
             }
         }
         catch (Exception exception)
@@ -259,7 +243,7 @@ public class ModProfileManager
 
         try
         {
-            FileReader filereader = new FileReader(file1);
+            Reader filereader = new InputStreamReader(new FileInputStream(file1), StandardCharsets.UTF_8);
             Throwable throwable = null;
 
             try

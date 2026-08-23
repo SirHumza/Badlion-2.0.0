@@ -33,16 +33,12 @@ public class CTOSWorker implements Runnable
                     {
                         Wrapper.getInstance().sendClientToServerComparisonHash(hashindex.getHash(), hashindex.getIndex());
                     }
-                    else
-                    {
-                        System.exit(0);
-                    }
                 }
             }
         }
         catch (InterruptedException var4)
         {
-            System.exit(0);
+            // Interrupt ends the worker, not the whole client
         }
     }
 }

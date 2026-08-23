@@ -33,16 +33,12 @@ public class STOCWorker implements Runnable
                     {
                         Wrapper.getInstance().sendServerToClientComparisonHash(hashindex.getHash(), hashindex.getIndex());
                     }
-                    else
-                    {
-                        System.exit(0);
-                    }
                 }
             }
         }
         catch (InterruptedException var4)
         {
-            System.exit(0);
+            // Interrupt ends the worker, not the whole client
         }
     }
 }
