@@ -1,58 +1,50 @@
 # Badlion Client (1.8.9)
 
-The old Badlion Client — packaged so you can play it without the Badlion launcher. Drop one jar into PrismLauncher (or MultiMC, vanilla, whatever you use) on a 1.8.9 instance and you're in.
+This is the old Badlion Client — build 2.0.0-v-beta, the last one that was ever open source — repackaged so you can just drop it into PrismLauncher and play. No Badlion launcher, no client account, none of that.
 
-This is **Badlion 2.0.0-v-beta** — the last open-source build of the client, the one with capes, scoreboard, ping, FPS, keystrokes, all the HUD stuff. **OptiFine 1.8.8** is bundled inside the same jar, so shaders + the FPS bump come along for free.
+You get the whole classic HUD lineup: capes, scoreboard, ping, FPS counter, keystrokes, CPS, potion status, coordinates, all of it. OptiFine 1.8.8 rides along in the same jar, so shaders and the FPS boost work out of the box too.
 
-## Get it
+## Getting it running
 
-[**Download `badlion.jar` from Releases**](https://github.com/SirHumza/Badlion-3.0.0/releases/latest)
+Grab [`badlion.jar` from Releases](https://github.com/SirHumza/Badlion-2.0.0/releases/latest).
 
-You'll see two files there:
+There are two jars up there:
 
-- `badlion.jar` — what you actually want. Drop this into PrismLauncher's *Jar Mods* tab.
-- `badlion-all.jar` — same thing but with every Java dep crammed in too. Only useful if you want to run the client without a launcher.
+- `badlion.jar` — the one you want.
+- `badlion-all.jar` — same thing plus every Java dependency crammed in. Only useful if you're running straight from a terminal with no launcher (see below).
 
-## Setting it up in PrismLauncher
+In PrismLauncher:
 
-1. **Add Instance** → **Vanilla** → pick **1.8.9** → name it whatever (`Badlion` works).
-2. Right-click the instance → **Edit Instance**.
-3. Open the **Version** tab. Click **Add to Minecraft.jar** (older Prism builds call this *Jar Mods*).
-4. Pick the `badlion.jar` you downloaded.
-5. Save, hit **Play**.
+1. Make a vanilla **1.8.9** instance, name it whatever.
+2. Right-click it → **Edit Instance** → **Version** tab.
+3. Click **Add to Minecraft.jar** (older Prism builds call this *Jar Mods*).
+4. Pick `badlion.jar`, save, hit Play.
 
-That's it. You should see the Badlion main menu instead of the vanilla one. OptiFine's video settings show up under Options → Video Settings automatically.
+If the Badlion main menu shows up instead of the normal one, it worked. Options → Video Settings now has the full OptiFine menu too.
 
-> Heads up: keep an eye on RAM. Edit Instance → Settings → Java → Memory, set max to at least 3 or 4 GB. The jar carries every Badlion cosmetic texture, so allocating tiny RAM = stutter.
+One thing worth doing first: give it RAM. Edit Instance → Settings → Java → Memory, set max to at least 3–4 GB. The jar carries every cosmetic texture Badlion ever shipped, and starving it of memory = stutter.
 
-## Running it standalone
-
-If you don't want a launcher at all:
+## No launcher? Fine
 
 ```bash
 java -Djava.library.path=natives -jar badlion-all.jar --username YourName
 ```
 
-You need a `natives/` folder next to the jar with LWJGL natives for your OS. PrismLauncher handles this for you; standalone you'll have to grab them yourself or run `./gradlew unzipNatives` from a source checkout.
+You'll need a `natives/` folder next to the jar with the LWJGL natives for your OS — run `./gradlew unzipNatives` from a source checkout to get them. Honest advice though: just use Prism, it handles all of this for you.
 
-## Building from source
+## Building it yourself
 
 You need Java 8 (Temurin works fine).
 
 ```bash
-git clone https://github.com/SirHumza/Badlion-3.0.0.git
-cd Badlion-3.0.0
+git clone https://github.com/SirHumza/Badlion-2.0.0.git
+cd Badlion-2.0.0
 ./gradlew build
 ```
 
-Outputs land in `build/libs/`. OptiFine 1.8.8 is checked in at `libs/optifine.jar`, so the build is fully self-contained — no internet, no extra steps.
+Both jars land in `build/libs/`. OptiFine 1.8.8 is checked in at `libs/optifine.jar`, so the build is fully self-contained — no extra downloads, works offline.
 
-Other useful tasks:
-
-| Task | What it does |
-|---|---|
-| `./gradlew startGame` | Launch the client locally for dev. |
-| `./gradlew startGame --args='--username Pace'` | Same, but with a specific name. |
+For dev testing, `./gradlew startGame` boots the client directly. Add `--args='--username Pace'` if you want a specific name.
 
 ## What's actually in this repo
 
@@ -76,24 +68,22 @@ src/main/java/
 libs/optifine.jar                  -- OptiFine 1.8.8 HD U I7, merged into output jars at build time
 ```
 
-If you want to read or change behavior, `net/badlion/client/` is the place to start. Everything else is vanilla MC, OptiFine, or LaunchWrapper.
+Want to change how something behaves? `net/badlion/client/` is the only folder you need. Everything else is vanilla MC, OptiFine, or LaunchWrapper.
 
 ## How it actually works (briefly)
 
-PrismLauncher overlays `badlion.jar` onto vanilla `minecraft.jar` at launch. Both Badlion's modified MC classes *and* OptiFine's modified MC classes win at classload time. Then `BadlionTweaker` (a LaunchWrapper tweaker) registers a bytecode transformer that wires up Badlion's runtime hooks (cape rendering, scoreboard injection, anti-cheat ping, etc.). OptiFine boots the same way through its own tweaker.
+Prism overlays `badlion.jar` onto vanilla `minecraft.jar` at launch, so both Badlion's modified MC classes and OptiFine's win at classload time. Then `BadlionTweaker` registers a bytecode transformer that hooks Badlion's runtime stuff into the game — cape rendering, scoreboard injection, anti-cheat ping, that kind of thing. OptiFine boots through its own tweaker the same way.
 
-## Things that might trip you up
+## When things break
 
-| Problem | Fix |
-|---|---|
-| `No lwjgl64 in java.library.path` | Use `./gradlew startGame` (it sets the library path), or pass `-Djava.library.path=jars/natives` yourself. |
-| Game launches, no Badlion UI | Make sure `badlion.jar` is in the *Jar Mods* tab, not the *Mods* (Forge) tab. They're different. |
-| Crashes on launch with `ClassNotFoundException: net.minecraft.launchwrapper.*` | You're running the thin jar standalone. Use `badlion-all.jar`, or run inside a launcher. |
-| Online mode auth fails | The launcher has to pass a real `--accessToken`. Online accounts in Prism handle this automatically. Offline accounts skip auth. |
+- **`No lwjgl64 in java.library.path`** — launch with `./gradlew startGame` (it sets the path), or pass `-Djava.library.path=jars/natives` yourself.
+- **Game runs but no Badlion UI** — `badlion.jar` goes in *Jar Mods*, not the Forge *Mods* tab. They look similar, they are not the same.
+- **Crash on launch: `ClassNotFoundException: net.minecraft.launchwrapper.*`** — you ran the thin jar standalone. Use `badlion-all.jar`, or run through a launcher.
+- **Online auth fails** — whatever launches the game has to pass a real `--accessToken`. Prism does this automatically for online accounts; offline accounts skip auth entirely.
 
 ## Credit
 
-- Original Badlion Client team — closed source these days, this is from a leaked dump of v2.0.0-v-beta.
+- Original Badlion team — the client is closed source now; this came from a leaked dump of v2.0.0-v-beta.
 - Decompile + repackage: [@SirHumza](https://github.com/SirHumza)
 - OptiFine: sp614x
 - Minecraft: Mojang
